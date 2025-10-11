@@ -10,4 +10,20 @@ export class UserService {
     async signin(req: SigninDTO) {
         return req
     }
+
+    async listAll() {
+        return 'listando'
+    }
+
+    async searchById() {
+        return 'listando'
+    }
+
+    async updateUser() {
+        return 'usuario atualizado'
+    }
+
+    async deleteUser() {
+        return 'Usuario deletado'
+    }
 }
