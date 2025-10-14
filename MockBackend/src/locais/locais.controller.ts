@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Patch, Post, Put } from "@nestjs/common";
-import type { SignupLocal } from "./DTOs/locais";
+import { SignupLocal } from "./DTOs/locais";
 import { LocaisService } from "./locais.service";
 
 @Controller() 

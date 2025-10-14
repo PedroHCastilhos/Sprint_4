@@ -66,18 +66,55 @@ export class UserService {
     }
 
     async listAll() {
-        return 'listando'
+        const users = await this.prismaService.user.findMany() 
+        return users
     }
 
-    async searchById() {
-        return 'listando'
+    async searchById(id : number) {
+        const user = await this.prismaService.user.findUnique({
+            where: {
+                id : id
+            }
+        })
+
+        if(user == null) {
+            return 'Usuario nao encontrado'
+        }
+        
+        return user
     }
 
-    async updateUser() {
-        return 'usuario atualizado'
+    async updateUser(req, id : number) {
+        const hashedPassword = await bcrypt.hash(req.password, 10)
+
+        const user = await this.prismaService.user.update({
+            where: {
+                id : id
+            },
+            data : {
+                ...req,
+                password: hashedPassword
+            }
+        })
+
+        if(user == null) {
+            return 'Usuario nao encontrado'
+        }
+        
+        return user
     }
 
-    async deleteUser() {
-        return 'Usuario deletado'
+    async deleteUser(req, id : number) {
+        const user = this.prismaService.user.delete({
+            where: {
+                id : id
+            }
+        })
+
+        if(user == null) {
+            return 'Usuario nao encontrado'
+        }
+
+        return user
     }
 }

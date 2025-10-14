@@ -1,5 +1,5 @@
-import { Body, Controller, Post, Get, Patch, Delete } from '@nestjs/common';
-import type { SignupDTO, SigninDTO} from './DTOs/user';
+import { Body, Controller, Post, Get, Patch, Delete, ParseArrayPipe, Param } from '@nestjs/common';
+import { SignupDTO, SigninDTO} from './DTOs/user';
 import { UserService } from './user.service';
 
 @Controller()
@@ -22,17 +22,17 @@ export class UserController {
     }
 
     @Get('users/:id')
-    async searchById() {
-        return await this.userService.searchById()
+    async searchById(@Param('id') id : number) {
+        return await this.userService.searchById(id)
     }
 
     @Patch('users/:id')
-    async updateUser(@Body() req) {
-        return await this.userService.updateUser()
+    async updateUser(@Body() req , @Param('id') id : number) {
+        return await this.userService.updateUser(req, id)
     }
 
     @Delete('users/:id')
-    async deleteUser(@Body() req) {
-        return this.userService.deleteUser()
+    async deleteUser(@Body() req, @Param('id') id : number) {
+        return this.userService.deleteUser(req, id)
     }
 }
