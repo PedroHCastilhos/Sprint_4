@@ -26,4 +26,5 @@ model Local {
   id Int @id @default(autoincrement())
   descricao String
   acessLevel Int
+  isBlocked Boolean @default(false)
 }
