@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { SigninDTO, SignupDTO } from './DTOs/user';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt'
@@ -8,6 +8,10 @@ import {JwtService } from '@nestjs/jwt';
 export class UserService {
     constructor(private prismaService: PrismaService, private jwtService: JwtService) {}
     async signup(req: SignupDTO) {
+        if(req.level < 1 || req.level > 5) {
+            throw new UnauthorizedException('Nivel de acesso invalido')
+        }
+        
         const existeUsuario = await this.prismaService.user.findUnique({
             where: {
                 email: req.email
@@ -78,7 +82,7 @@ export class UserService {
         })
 
         if(user == null) {
-            return 'Usuario nao encontrado'
+            throw new NotFoundException('Usuario nao encontrado')
         }
         
         return user
@@ -86,6 +90,10 @@ export class UserService {
 
     async updateUser(req, id : number) {
         const hashedPassword = await bcrypt.hash(req.password, 10)
+
+        if(req.level < 1 || req.level > 5) {
+            throw new UnauthorizedException('Nivel de acesso invalido')
+        }
 
         const user = await this.prismaService.user.update({
             where: {
@@ -98,7 +106,7 @@ export class UserService {
         })
 
         if(user == null) {
-            return 'Usuario nao encontrado'
+            throw new NotFoundException('Usuario nao encontrado')
         }
         
         return user
@@ -112,7 +120,28 @@ export class UserService {
         })
 
         if(user == null) {
-            return 'Usuario nao encontrado'
+            throw new NotFoundException('Usuario nao encontrado')
+        }
+
+        return user
+    }
+
+    async updateLevel(id : number, level : number) {
+        if(level < 1 || level > 5) {
+            throw new UnauthorizedException('Nivel de acesso invalido')
+        }
+
+        const user = this.prismaService.user.update({
+            where : {
+                id : id
+            },
+            data : {
+                level : level
+            }
+        })
+
+        if(user == null) {
+            throw new NotFoundException('Usuario nao encontrado')
         }
 
         return user
